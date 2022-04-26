@@ -16,11 +16,7 @@ func main() {
 			file minfo.File
 			err  error
 		)
-		if a == "-" {
-			file, err = minfo.Read(os.Stdin)
-		} else {
-			file, err = minfo.ReadURL(context.Background(), a)
-		}
+		file, err = minfo.ReadURL(context.Background(), a)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "error reading file %q: %v", a, err)
 		} else {
