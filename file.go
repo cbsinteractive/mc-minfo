@@ -8,6 +8,10 @@ import (
 	"github.com/as/json"
 )
 
+type Track interface {
+	Info() Header
+}
+
 type File struct {
 	Path string `json:",omitempty"`
 
@@ -28,7 +32,7 @@ type File struct {
 	OverallBitRateMode string  `json:"OverallBitRate_Mode,omitempty"`
 	IsStreamable       string  `json:"IsStreamable,omitempty"`
 
-	Track []interface{} `json:",omitempty"`
+	Track []Track `json:",omitempty"`
 }
 
 func (f File) Duration() time.Duration {
@@ -92,7 +96,7 @@ func (f *File) Decode(p []byte) error {
 		hdr := Header{}
 		json.Unmarshal([]byte(v), &hdr)
 		var track interface {
-			val() interface{}
+			val() Track
 		}
 		switch strings.ToLower(hdr.Type) {
 		case "general":
@@ -126,6 +130,8 @@ type Header struct {
 	StreamSize int `json:",omitempty,string"`
 	Duration float64 `json:",omitempty,string"`
 }
+
+func (h Header) Info() Header { return h }
 
 type Box struct {
 	Header
@@ -212,11 +218,11 @@ func (Audio) track() string    { return "audio" }
 func (Text) track() string     { return "text" }
 func (Timecode) track() string { return "timecode" }
 
-func (p *Box) val() interface{}      { return *p }
-func (p *Video) val() interface{}    { return *p }
-func (p *Audio) val() interface{}    { return *p }
-func (p *Text) val() interface{}     { return *p }
-func (p *Timecode) val() interface{} { return *p }
+func (p *Box) val() Track      { return *p }
+func (p *Video) val() Track    { return *p }
+func (p *Audio) val() Track    { return *p }
+func (p *Text) val() Track     { return *p }
+func (p *Timecode) val() Track { return *p }
 
 type Frame struct {
 	Count            int     `json:"FrameCount,omitempty,string"`
