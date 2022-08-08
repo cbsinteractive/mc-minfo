@@ -7,12 +7,14 @@ import (
 	"os/exec"
 )
 
-func check(path string) error {
-	r, err := http.Head(path)
-	if err != nil {
+func check(c context.Context, path string) error {
+	r, err := http.NewRequest("GET", path, nil)
+	if err != nil{
 		return err
 	}
-	stat := r.StatusCode
+	r.Header.Set("Range", "bytes=0-100")
+	resp, err := http.DefaultClient.Do(r.WithContext(c))
+	stat := resp.StatusCode
 	if stat >= 400 {
 		return fmt.Errorf("check: %q: bad http status %d", path, stat)
 	}
@@ -20,7 +22,7 @@ func check(path string) error {
 }
 
 func ReadURL(c context.Context, path string) (media File, err error) {
-	if err = check(path); err != nil {
+	if err = check(c, path); err != nil {
 		return
 	}
 	out, err := exec.CommandContext(c, "mediainfo", "--Output=JSON", path).Output()
