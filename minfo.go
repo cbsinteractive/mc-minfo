@@ -5,11 +5,15 @@ import (
 	"fmt"
 	"net/http"
 	"os/exec"
+	"strings"
 )
 
 func check(c context.Context, path string) error {
+	if !strings.HasPrefix(path, "http") {
+		return nil
+	}
 	r, err := http.NewRequest("GET", path, nil)
-	if err != nil{
+	if err != nil {
 		return err
 	}
 	r.Header.Set("Range", "bytes=0-100")
