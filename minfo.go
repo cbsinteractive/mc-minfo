@@ -18,6 +18,9 @@ func check(c context.Context, path string) error {
 	}
 	r.Header.Set("Range", "bytes=0-100")
 	resp, err := http.DefaultClient.Do(r.WithContext(c))
+	if err != nil {
+		return err
+	}
 	stat := resp.StatusCode
 	if stat >= 400 {
 		return fmt.Errorf("check: %q: bad http status %d", path, stat)
