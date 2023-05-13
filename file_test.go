@@ -1,8 +1,13 @@
 package minfo
 
 import (
+	"context"
 	"testing"
 )
+
+func TestCrash(t *testing.T) {
+	ReadURL(context.Background(), "/dev/null")
+}
 
 func TestMinfo(t *testing.T) {
 	f := File{}

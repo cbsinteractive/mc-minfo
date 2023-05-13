@@ -1,6 +1,7 @@
 package minfo
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"net/http"
@@ -35,6 +36,18 @@ func ReadURL(c context.Context, path string) (media File, err error) {
 	out, err := exec.CommandContext(c, "mediainfo", "--Output=JSON", path).Output()
 	if err != nil {
 		return
+	}
+
+	// NOTE(as): these absolute mediainfo geniuses decide to break their own program
+	// and have it output:
+	//
+	// default ca info path: /etc/ssl/certs/ca-certificates.crt
+	//
+	// On startup... amazing
+	if n := bytes.IndexAny(out, "{"); n == -1 {
+		return media, fmt.Errorf("mediainfo exe broken: no valid json output: %q", path)
+	} else {
+		out = out[n:]
 	}
 	return media, media.Decode(out)
 }
