@@ -2,6 +2,7 @@ package minfo
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 	"time"
 
@@ -92,6 +93,7 @@ func (f *File) Decode(p []byte) error {
 	if err := json.Unmarshal(p, &tmp); err != nil {
 		return err
 	}
+	order := map[int]string{}
 	for _, v := range tmp.Media.Track {
 		hdr := Header{}
 		json.Unmarshal([]byte(v), &hdr)
@@ -117,18 +119,28 @@ func (f *File) Decode(p []byte) error {
 		}
 		json.Unmarshal([]byte(v), track)
 		if track != nil {
+			order[len(f.Track)] = hdr.StreamOrder
 			f.Track = append(f.Track, track.val())
 		}
 	}
+
+	sort.SliceStable(f.Track, func(i, j int) bool {
+		ii := order[i]
+		jj := order[j]
+		if ii == "" || jj == "" {
+			return i < j
+		}
+		return ii < jj
+	})
 	return nil
 }
 
 type Header struct {
 	Type string `json:"@type,omitempty"`
 	ID,
-	StreamOrder,
 	StreamSize int `json:",omitempty,string"`
-	Duration float64 `json:",omitempty,string"`
+	StreamOrder string  `json:",omitempty"`
+	Duration    float64 `json:",omitempty,string"`
 }
 
 func (h Header) Info() Header { return h }
