@@ -9,6 +9,10 @@ import (
 	"github.com/as/minfo"
 )
 
+var (
+	onlydur = flag.Bool("dur", false, "only print duration of root container and exit")
+)
+
 func main() {
 	flag.Parse()
 	for _, a := range flag.Args() {
@@ -20,7 +24,11 @@ func main() {
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "error reading file %q: %v", a, err)
 		} else {
-			fmt.Println(file.String())
+			if *onlydur {
+				fmt.Println(file.Header.Duration)
+			} else {
+				fmt.Println(file.String())
+			}
 		}
 	}
 
