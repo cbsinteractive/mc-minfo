@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/as/minfo"
+	minfo "github.com/cbsinteractive/mc-minfo"
 )
 
 var (
