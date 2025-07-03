@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/as/json"
+	json "github.com/cbsinteractive/mc-json"
 )
 
 type Track interface {

@@ -10,7 +10,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/as/minfo"
+	"github.com/cbsinteractive/mc-minfo"
 )
 
 func main() {
@@ -24,7 +24,7 @@ func main() {
 # usage - command line
 
 ```
-go get github.com/as/minfo/cmd/minfo
+go get github.com/cbsinteractive/mc-minfo/cmd/minfo
 minfo http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4
 ```
 
